@@ -1,12 +1,20 @@
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
 from http import client
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import requests
 from bs4 import BeautifulSoup
 
-client = MongoClient(
-    'mongodb+srv://test:sparta@cluster0.l8jeyig.mongodb.net/?retryWrites=true&w=majority')
-db = client.dbsparta
+dotenv_path = join(dirname(__file__), ".env")
+load_dotenv(dotenv_path)
+
+MONGODB_URL = os.environ.get("MONGODB_URL")
+DB_NAME = os.environ.get("DB_NAME")
+
+client = MongoClient(MONGODB_URL)
+db = client[DB_NAME]
 
 app = Flask(__name__)
 
@@ -14,7 +22,6 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 @app.route("/movie", methods=["POST"])
 def movie_post():
